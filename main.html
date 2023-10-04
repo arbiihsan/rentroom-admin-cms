@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vite App</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./image/IDEA_logo.svg" type="image/x-icon" rel="shortcut icon" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+        integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,600,0,0"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="./css/form.css">
+    <link rel="stylesheet" href="./css/home.css">
+    <script src="https://accounts.google.com/gsi/client" async></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="./index.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <title>AYO - Admin Panel</title>
+</head>
+
+<body>
+    <div id="app">
+        <!-- Navbar -->
+        <header id="navbar" class="navbar">
+            <nav class="navbar-container">
+                <a class="navbar-logo" href="#">
+                    <img src="./image/IDEA_logo.svg" width="80" alt="IDEA" />
+                    <span class="navbar-brand">Admin Panel</span>
+                </a>
+            </nav>
+        </header>
+        <!-- Navbar -->
+
+
+        <!-- login section -->
+        
+        <!-- end login section -->
+
+        <!-- register section -->
+        <section id="register-section" v-if="currentPage === 'register'">
+            <div class="header">
+                <h2>Register</h2>
+            </div>
+            <form style="text-align: center;" action="/login" method="post" class="loginRegister">
+                <label for="username">Username:</label><br>
+                <input type="text" name="username" placeholder="Username" class="inputLoginRegister" required>
+
+                <label for="password">Email:</label><br>
+                <input type="password" name="email" placeholder="Email Address" class="inputLoginRegister" required>
+
+                <label for="password">Password:</label><br>
+                <input type="password" name="password" placeholder="Password" class="inputLoginRegister" required>
+
+                <label for="phoneNumber">Phone Number:</label><br>
+                <input type="number" name="phoneNumber" placeholder="Phone Number" class="inputLoginRegister" required>
+
+                <label for="address">Address:</label><br>
+                <input type="text" name="address" placeholder="Address" class="inputLoginRegister" required>
+
+                <button type="submit" class="buttonLoginRegister">Register</button>
+            </form>
+            <div class="register">
+                <div class="register_message">Already have an acoount?</div>
+                <button class="register_button" id="login-button" @click="changePage('login')">Login</button>
+            </div>
+        </section>
+        <!-- end register section -->
+
+        <!-- Home Section -->
+        <section class="home-container" id="home-section" v-if="currentPage !== 'login' && currentPage !== 'register'">
+            <!-- Sidebar -->
+            <nav id="sidebar-menu" v-if="currentPage !== ('login' || 'register')">
+                <div>
+                    <ul class="navigation">
+                        <li>
+                            <a href="" id="nav-dashboard" @click.prevent="changePage('dashboard')">
+                                <span class="icon material-symbols-outlined me-2">shopping_cart</span>Dashboard</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="" id="nav-lodging" @click.prevent="changePage('lodgings')">
+                                <span class="icon material-symbols-outlined me-2">shopping_bag</span>Lodgings</a>
+                        </li>
+                        <li>
+                            <a href="" id="nav-type" @click.prevent="changePage('types')">
+                                <span class="icon material-symbols-outlined me-2">category</span>Types</a>
+                        </li>
+                    </ul>
+                    <h4>
+                        <span>Account</span>
+                    </h4>
+                    <ul class="navigation">
+                        <li>
+                            <a>
+                                <span class="icon material-symbols-outlined me-2">person</span> <span
+                                    id="username"></span></a>
+                        </li>
+                        <li>
+                            <a href="" id="nav-logout">
+                                <span class="icon material-symbols-outlined me-2">logout</span>Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- End Sidebar -->
+
+            <!-- dashboard Section -->
+            <section id="dashboard-section" class="dashboard-section" v-if="currentPage === 'dashboard'">
+                <div class="dashboard-header">
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="dashboard-items">
+                    <div class="dashboard-item">
+                        <div class="dashboard-title">Total Lodgings</div>
+                        <div id="total-lodgings" class="dashboard-value">0</div>
+                    </div>
+
+                    <div class="dashboard-item">
+                        <div class="dashboard-title">Total Types</div>
+                        <div id="total-type" class="dashboard-value">0</div>
+                    </div>
+                </div>
+            </section>
+            <!-- End dashboard Section -->
+
+
+            <!-- Lodging Section -->
+            <section id="lodging-section" class="lodging-section" v-if="currentPage === 'lodgings'">
+                <div class="section-header">
+                    <h1>Lodgings</h1>
+                    <button id="new-lodging" class="add-button" @click.prevent="changePage('new-lodging')">
+                        <span class="icon material-symbols-outlined">add</span> <span>New lodging</span>
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="lodging-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Image</th>
+                                <th>Facility</th>
+                                <th>Room Capacity</th>
+                                <th>Price</th>
+                                <th>Location</th>
+                                <th>Type</th>
+                                <th>Author Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-lodgings">
+                            <tr>
+                                <td>#1</td>
+                                <td>MILLBERGET</td>
+                                <td>
+                                    <img class="table-image"
+                                        src="https://d2xjmi1k71iy2m.cloudfront.net/dairyfarm/id/images/201/1020142_PE831799_S4.jpg" />
+                                </td>
+                                <td>Swivel chair, murum black</td>
+                                <td>13</td>
+                                <td>Rp1.599.000</td>
+                                <td>ziady.mubaraq@gmail.com</td>
+                                <td>
+                                    <a href=""><span
+                                            class="icon material-symbols-outlined text-danger">delete</span></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <!-- End lodging Section -->
+
+            <!-- New lodging Section -->
+            <section id="new-lodging-section" class="new-lodging-section" v-if="currentPage === 'new-lodging'">
+                <div>
+                    <h1>New Lodging</h1>
+                </div>
+                <div>
+                    <form id="lodging-form" class="lodging-form">
+                        <div class="form-group">
+                            <label for="lodging-name" class="form-label">Name <span class="required">*</span></label>
+                            <input type="text" id="lodging-name" class="form-input" placeholder="Enter lodging name"
+                                autocomplete="off" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="lodging-type" class="form-label">Type <span class="required">*</span></label>
+                            <select id="lodging-type" class="form-select" required>
+                                <option value="" selected disabled>-- Select Type --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="facility" class="form-label">Facility <span class="required">*</span></label>
+                            <input type="text" id="facility" class="form-input" placeholder="Enter lodging facility"
+                                autocomplete="off" required />
+                        </div>
+                        <div >
+                            <div class="form-group-inner">
+                                <div class="form-group-half">
+                                    <label for="room-capacity" class="form-label">Room Capacity <span
+                                            class="required">*</span></label>
+                                    <input type="number" min="0" id="room-capacity" class="form-input"
+                                        placeholder="Enter room capacity" autocomplete="off" required />
+                                </div>
+                                <div class="form-group-half">
+                                    <label for="price" class="form-label">Price <span class="required">*</span></label>
+                                    <input type="number" min="0" id="price" class="form-input"
+                                        placeholder="Enter lodging price" autocomplete="off" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lodging-image" class="form-label">Image <span class="required">*</span></label>
+                            <input type="text" id="lodging-image" class="form-input"
+                                placeholder="Enter lodging image url" autocomplete="off" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="location" class="form-label">Location <span class="required">*</span></label>
+                            <input type="text" id="location" class="form-input" placeholder="Enter lodging location"
+                                autocomplete="off" required />
+                        </div>
+                        <div >
+                            <div class="form-button-group">
+                                <a id="cancel-submit" class="form-cancel-link">Cancel</a>
+                                <button type="submit" class="form-submit-button">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+            <!-- End New lodging Section -->
+
+            <!-- type Section -->
+            <section id="type-section" class="lodging-section" v-if="currentPage === 'types'">
+                <div class="section-header">
+                    <h1>Types</h1>
+                    <button id="new-type" class="add-button" @click.prevent="changePage('new-type')">
+                        <span class="icon material-symbols-outlined">add</span>New
+                        type
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="lodging-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-type">
+                            <tr>
+                                <td>#1</td>
+                                <td>Furniture</td>
+                                <td>
+                                    <a href=""><span
+                                            class="icon material-symbols-outlined text-danger">delete</span></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <!-- End type Section -->
+
+            <!-- New type Section -->
+            <section id="new-type-section" v-if="currentPage === 'new-type'">
+                <div>
+                    <h1>New type</h1>
+                </div>
+                <div>
+                    <form id="type-form" class="lodging-form">
+                        <div class="form-group" >
+                            <label for="type-name">Name <span>*</span></label>
+                            <input type="text" id="type-name" class="form-input" placeholder="Enter type name" autocomplete="off"
+                                required />
+                        </div>
+                        <div class="form-button-group">
+                            <div>
+                                <a id="cancel-submit-type" class="form-cancel-link">Cancel</a>
+                            </div>
+                            <div>
+                                <button type="submit" href="" class="form-submit-button">
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+            <!-- End New type Section -->
+        </section>
+        <!-- End Home Section -->
+    </div>
+
+    <!-- <script>
+        const { createApp } = Vue
+
+        createApp({
+            data() {
+                return {
+                    message: 'hello',
+                    currentPage: "dashboard"
+                }
+            },
+            methods: {
+                changePage(page) {
+                    this.currentPage = page
+                },
+                async handleFetchLodgings() {
+                    const { data } = await axios({
+                        method: "GET",
+                        url: "http://localhost:3000/lodgings"
+                    })
+                    this.lodgings = data
+                }
+            },
+            created() {
+                if (localStorage.getItem("access_token")) {
+                    this.currentPage = "dashboard"
+                } else {
+                    this.currentPage = "login"
+                }
+            }
+        }).mount('#app')
+    </script> -->
+</body>
+
+</html>
